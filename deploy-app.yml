@@ -1,0 +1,37 @@
+# Create a GitHub action to email a report from a file at 6 a.m. daily
+# This action runs on ubuntu-latest
+# It uses the SendGrid email service, which has a free tier
+# The following secrets must be set in the GitHub repo:
+# SENDGRID_API_KEY - SendGrid API key
+# EMAIL_FROM - the email address to send the report from
+# EMAIL_TO - the email address to send the report to
+
+name: Email report
+
+on:
+  schedule:
+    - cron: "0 6 * * *"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Send email
+        uses: dawidd6/action-send-mail@v2
+        with:
+          server_address: smtp.sendgrid.net
+          server_port: 465
+          username: ${{ secrets.SENDGRID_API_KEY }}
+          password: ${{ secrets.SENDGRID_API_KEY }}
+          subject: "Daily report"
+          body: "See attached"
+          from: ${{ secrets.EMAIL_FROM }}
+          to: ${{ secrets.EMAIL_TO }}
+          attachments: "report.txt"
+```
+
+## License
+
+[MIT](LICENSE)
